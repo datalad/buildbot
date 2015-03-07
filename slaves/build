@@ -1,0 +1,6 @@
+#!/bin/bash
+
+docker build -t datalad/buildbot:slave-nd80 .
+
+# can't do below trick if want to use COPY with relative path... not sure what is default dir then
+# - < Dockerfile
