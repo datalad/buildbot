@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y -q \
    python-dev \
    python-pip
 RUN pip install buildbot-slave
-RUN groupadd -r buildbot && useradd -r -g buildbot buildbot
-RUN mkdir /buildslave && chown buildbot:buildbot /buildslave
+#RUN groupadd -r buildbot && useradd -r -g buildbot buildbot
+#RUN mkdir /buildslave && chown buildbot:buildbot /buildslave
+RUN groupadd -r buildbot && useradd -g buildbot buildbot
 
 # Assure popcon doesn't kick in
 RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
@@ -23,7 +24,7 @@ RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set
 RUN apt-get install -y -q git-annex python-git python-bs4 patool python-testtools python-mock python-joblib
 
 USER buildbot
-WORKDIR /buildslave
+WORKDIR /home/buildbot
 RUN buildslave create-slave . 172.17.42.1 nd80 alis212
 ENTRYPOINT ["/usr/local/bin/buildslave"]
 CMD ["start", "--nodaemon"]
