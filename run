@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker run -p 8010:8010 -p 9989:9989 datalad/buildbot-0.9:0.0.1test2
+
