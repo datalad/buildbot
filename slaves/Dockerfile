@@ -23,6 +23,7 @@ RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set
 # Install datalad dependencies
 RUN apt-get install -y -q git-annex python-git python-bs4 patool python-testtools python-mock python-joblib
 
+RUN apt-get clean
 USER buildbot
 WORKDIR /home/buildbot
 RUN buildslave create-slave . 172.17.42.1 nd80 alis212
