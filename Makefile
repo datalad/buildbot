@@ -3,7 +3,12 @@
 BUILDBOT_SRC_DIR=$(CURDIR)/3rd/buildbot
 
 run-master:
-	{ set -e; . venv/bin/activate; cd $(CURDIR)/master; buildbot start; }
+	{ set -e; . venv/bin/activate; cd $(CURDIR)/master; \
+    buildbot start; }
+
+prepare-master:
+	{ set -e; . venv/bin/activate; cd $(CURDIR)/master; \
+	buildbot upgrade-master $(CURDIR)/master; }
 
 reconfig-master:
 	{ set -e; . venv/bin/activate; cd $(CURDIR)/master; buildbot reconfig; }

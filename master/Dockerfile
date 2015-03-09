@@ -7,7 +7,7 @@ COPY conf/etc/apt/apt.conf.d/99apt-cacher /etc/apt/apt.conf.d/99apt-cacher
 RUN apt-get update
 # pull in old and new dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-	buildbot npm nodejs git virtualenv
+	buildbot npm nodejs python-docker git virtualenv
 # Debian renamed it to nodejs... heh heh
 RUN ln -s /usr/bin/nodejs /usr/local/bin/node
 # purge old version of buildbot itself
@@ -25,8 +25,13 @@ RUN git clone git://github.com/datalad/buildbot.git; cd buildbot; git submodule 
 RUN virtualenv --system-site-packages buildbot/venv
 RUN make -C buildbot install
 
+USER root
 # Copy private information
 COPY private/* /home/buildbot/buildbot/master/private/
+RUN chown buildbot.buildbot -R /home/buildbot/buildbot/master/private/
+
+USER buildbot
+RUN cd buildbot; make prepare-master
 
 EXPOSE :8020
-cmd ["/home/buildbot/buildbot/run", "-n"]
+ENTRYPOINT ["/home/buildbot/buildbot/run"]
