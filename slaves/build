@@ -9,7 +9,7 @@ for DL_DIST in nd70 nd80 nd14.04; do
 #for DL_DIST in nd70; do
 	# buildbot can't tollerate dots in the names
 	DL_SLAVE=docker-dl-${DL_DIST//./_}
-	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../slave_passwords)
+	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)
 
 	sed  -e "s,DL_SLAVE,$DL_SLAVE,g" -e "s,DL_DIST,$DL_DIST,g" -e "s,DL_PASSW,$DL_PASSW,g" < Dockerfile.in >| Dockerfile
 	# add --no-cache if complete rebuild is necessary, otherwise it would re-use prev generated
