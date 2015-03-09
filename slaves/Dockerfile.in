@@ -1,4 +1,4 @@
-FROM neurodebian:jessie
+FROM neurodebian:DL_DIST
 
 MAINTAINER Yaroslav Halchenko <yoh@datalad.org>
 
@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y -q \
 RUN pip install buildbot-slave
 #RUN groupadd -r buildbot && useradd -r -g buildbot buildbot
 #RUN mkdir /buildslave && chown buildbot:buildbot /buildslave
-RUN groupadd -r buildbot && useradd -g buildbot buildbot
+RUN groupadd -r buildbot && useradd -m -g buildbot buildbot
 
 # Assure popcon doesn't kick in
 RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
@@ -24,8 +24,12 @@ RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set
 RUN apt-get install -y -q git-annex python-git python-bs4 patool python-testtools python-mock python-joblib
 
 RUN apt-get clean
+
 USER buildbot
 WORKDIR /home/buildbot
-RUN buildslave create-slave . 172.17.42.1 nd80 alis212
+# Prepare system for working with Git
+RUN git config --global user.email "test@buildslave.land"
+RUN git config --global user.name "Buildbot DL_SLAVE almighty"
+RUN buildslave create-slave . 172.17.42.1 DL_SLAVE DL_PASSW
 ENTRYPOINT ["/usr/local/bin/buildslave"]
 CMD ["start", "--nodaemon"]
