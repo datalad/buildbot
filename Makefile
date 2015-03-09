@@ -4,7 +4,7 @@ BUILDBOT_SRC_DIR=$(CURDIR)/3rd/buildbot
 
 run-master:
 	{ set -e; . venv/bin/activate; cd $(CURDIR)/master; \
-    buildbot start; }
+    buildbot start --nodaemon; }
 
 prepare-master:
 	{ set -e; . venv/bin/activate; cd $(CURDIR)/master; \

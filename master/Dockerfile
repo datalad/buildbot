@@ -31,7 +31,8 @@ COPY private/* /home/buildbot/buildbot/master/private/
 RUN chown buildbot.buildbot -R /home/buildbot/buildbot/master/private/
 
 USER buildbot
-RUN cd buildbot; make prepare-master
+# pull is just to help with pushing changes while playing with Dockerfile/setup
+RUN cd buildbot; git pull; make prepare-master
 
 EXPOSE :8020
 ENTRYPOINT ["/home/buildbot/buildbot/run"]
