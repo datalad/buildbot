@@ -5,16 +5,26 @@ set -eu
 #DL_DISTs="${@:-nd"
 
 # TODO: wait for nd14.10 being generated
-for DL_DIST in nd70 nd80 nd14.04; do
-#for DL_DIST in nd70; do
+#for DL_DIST in nd70 nd80 nd14.04; do
+for DL_DIST in nd70; do
 	# buildbot can't tollerate dots in the names
 	DL_SLAVE=docker-dl-${DL_DIST//./_}
 	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)
-
-	sed  -e "s,DL_SLAVE,$DL_SLAVE,g" -e "s,DL_DIST,$DL_DIST,g" -e "s,DL_PASSW,$DL_PASSW,g" < Dockerfile.in >| Dockerfile
+	DL_APT="" # nothing to add by default BUT
+	DL_ANNEX=""
+	if [ $DL_DIST = 'nd70' ]; then
+		DL_APT="RUN echo 'deb http://http.debian.net/debian wheezy-backports main contrib non-free' > /etc/apt/sources.list.d/backports.list"
+		DL_ANNEX="-t wheezy-backports"
+	fi
+	sed  -e "s,DL_SLAVE,$DL_SLAVE,g" \
+		 -e "s,DL_DIST,$DL_DIST,g" \
+		 -e "s,DL_APT,$DL_APT,g" \
+		 -e "s,DL_ANNEX,$DL_ANNEX,g" \
+		 -e "s,DL_PASSW,$DL_PASSW,g" \
+		 < Dockerfile.in >| Dockerfile
 	# add --no-cache if complete rebuild is necessary, otherwise it would re-use prev generated
 	# containers for each step
-	docker build -t datalad/buildbot:slave-$DL_SLAVE . && rm Dockerfile
+	docker build -t datalad/buildbot:slave-$DL_SLAVE . #&& rm Dockerfile
 
 	# can't do below trick if want to use COPY with relative path... not sure what is default dir then
 	# - < Dockerfile

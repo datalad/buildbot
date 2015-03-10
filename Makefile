@@ -21,8 +21,13 @@ install:
 	}
 
 run-master-docker:
-	docker run -p 8010:8010 -p 9989:9989 datalad/buildbot-0.9:0.0.1test2
+	docker run -d -p 8020:8020 -p 9989:9989 datalad/buildbot:master-0.9 >| master.id
 
+stop-master-docker:
+	cat master.id | xargs docker stop
+
+start-master-docker:
+	cat master.id | xargs docker start
 
 build-docker-master:
 	echo "TODO: provide recipe for building master docker images"

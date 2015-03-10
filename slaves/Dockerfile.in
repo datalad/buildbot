@@ -1,5 +1,4 @@
 FROM neurodebian:DL_DIST
-
 MAINTAINER Yaroslav Halchenko <yoh@datalad.org>
 
 USER root
@@ -10,6 +9,8 @@ COPY conf/etc/apt/apt.conf.d/99apt-cacher /etc/apt/apt.conf.d/99apt-cacher
 # might interfer later with the testing, so -- disable
 # ENV http_proxy http://172.17.42.1:3128
 
+DL_APT
+
 RUN apt-get update && apt-get install -y -q \
    python-dev \
    python-pip
@@ -18,10 +19,12 @@ RUN pip install buildbot-slave
 #RUN mkdir /buildslave && chown buildbot:buildbot /buildslave
 RUN groupadd -r buildbot && useradd -m -g buildbot buildbot
 
+# TODO: add backports for wheezy
 # Assure popcon doesn't kick in
 RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
 # Install datalad dependencies
-RUN apt-get install -y -q git-annex python-git python-bs4 patool python-testtools python-mock python-joblib
+RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib
+RUN apt-get install -y -q DL_ANNEX git-annex
 
 RUN apt-get clean
 
