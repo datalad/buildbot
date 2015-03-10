@@ -5,8 +5,8 @@ set -eu
 #DL_DISTs="${@:-nd"
 
 # TODO: wait for nd14.10 being generated
-#for DL_DIST in nd70 nd80 nd14.04; do
-for DL_DIST in nd70; do
+for DL_DIST in nd70 nd80 nd14.04; do
+#for DL_DIST in nd70; do
 	# buildbot can't tollerate dots in the names
 	DL_SLAVE=docker-dl-${DL_DIST//./_}
 	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)
