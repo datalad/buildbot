@@ -16,7 +16,9 @@ RUN apt-get clean
 
 # that one was "in the wrong place in the wrong time"
 RUN deluser buildbot
-RUN groupadd -r buildbot && useradd -m -g buildbot buildbot
+# enforce specific uid/gid so we could use folder shared with the main
+# system
+RUN groupadd --gid 131 -r buildbot && useradd -m -g buildbot --uid 121 buildbot
 
 USER buildbot
 WORKDIR /home/buildbot
