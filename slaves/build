@@ -5,7 +5,7 @@ set -eu
 #DL_DISTs="${@:-nd"
 
 # TODO: wait for nd14.10 being generated
-../master/private/slaves.py print_dockers | while read DL_SLAVE DL_DIST DL_PASSW; do
+../master/private/slaves.py print_dockers |  while read DL_SLAVE DL_DIST DL_PASSW; do
 	# buildbot can't tollerate dots in the names
 #	DL_SLAVE=docker-dl-${DL_DIST//./_}
 #	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)
@@ -21,7 +21,7 @@ set -eu
 		 -e "s,DL_ANNEX,$DL_ANNEX,g" \
 		 -e "s,DL_PASSW,$DL_PASSW,g" \
 		 < Dockerfile.in >| Dockerfile
-	continue
+
 	# add --no-cache if complete rebuild is necessary, otherwise it would re-use prev generated
 	# containers for each step
 	docker build -t datalad/buildbot:slave-$DL_SLAVE . #&& rm Dockerfile

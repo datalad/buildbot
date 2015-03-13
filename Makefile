@@ -26,6 +26,7 @@ run-master-docker:
 
 stop-master-docker:
 	cat master.id | xargs docker stop
+	rm -f master/twistd.pid
 
 start-master-docker:
 	cat master.id | xargs docker start
