@@ -1,4 +1,4 @@
 #!/bin/bash
 set -eu
 
-docker build -t datalad/buildbot:master-0.9 .
+docker build -t datalad/buildbot:master-0.8 .

@@ -24,7 +24,7 @@ USER buildbot
 WORKDIR /home/buildbot
 
 RUN git clone git://github.com/datalad/buildbot.git; cd buildbot; git submodule update --init --recursive
-RUN virtualenv --system-site-packages buildbot/venv
+RUN virtualenv --system-site-packages buildbot/venv-eight
 RUN make -C buildbot install
 
 USER root
