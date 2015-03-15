@@ -1,3 +1,4 @@
 [submodule "3rd/buildbot"]
 	path = 3rd/buildbot
-	url = git://github.com/buildbot/buildbot
+	url = git://github.com/caktux/buildbot
+	#url = git://github.com/buildbot/buildbot

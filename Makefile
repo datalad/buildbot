@@ -1,7 +1,7 @@
 #!/usr/bin/make
 
 BUILDBOT_SRC_DIR=$(CURDIR)/3rd/buildbot
-VENV=venv
+VENV=venv-eight
 
 run-master:
 	{ set -e; . $(VENV)/bin/activate; cd $(CURDIR)/master; \
@@ -17,8 +17,8 @@ reconfig-master:
 install:
 	{ set -e; \
 		. $(VENV)/bin/activate; \
+		pip install txgithub; \
 		cd $(BUILDBOT_SRC_DIR)/master; pip install .; \
-		cd $(BUILDBOT_SRC_DIR); make frontend; \
 	}
 
 run-master-docker:
