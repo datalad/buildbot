@@ -6,6 +6,7 @@ USER root
 # Speed up installation using our apt cacher
 #RUN mkdir /etc/apt/apt.conf.d/
 COPY conf/etc/apt/apt.conf.d/99apt-cacher /etc/apt/apt.conf.d/99apt-cacher
+RUN chmod a+r /etc/apt/apt.conf.d/99apt-cacher
 # might interfer later with the testing, so -- disable
 # ENV http_proxy http://172.17.42.1:3128
 
