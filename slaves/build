@@ -10,10 +10,13 @@ set -eu
 #	DL_SLAVE=docker-dl-${DL_DIST//./_}
 #	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)
 	DL_APT="" # nothing to add by default BUT
-	DL_ANNEX=""
-	if [ $DL_DIST = 'nd70' ]; then
-		DL_APT="RUN echo 'deb http://http.debian.net/debian wheezy-backports main contrib non-free' > /etc/apt/sources.list.d/backports.list"
-		DL_ANNEX="-t wheezy-backports"
+	DL_ANNEX="git-annex"
+    # We need standalone build of annex for anything but jessie or newer
+	if [ $DL_DIST != 'nd80' ]; then
+	   if [ $DL_DIST = 'nd70' ]; then
+		DL_APT="RUN echo 'deb http://http.debian.net/debian wheezy-backports main contrib non-free' > /etc/apt/sources.list.d/backports.list; apt-get update; apt-get install -y -t wheezy-backports git"
+	   fi
+	   DL_ANNEX="git-annex-standalone"
 	fi
 	sed  -e "s,DL_SLAVE,$DL_SLAVE,g" \
 		 -e "s,DL_DIST,$DL_DIST,g" \
