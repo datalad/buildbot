@@ -23,9 +23,13 @@ RUN groupadd -r buildbot && useradd -m -g buildbot buildbot
 # TODO: add backports for wheezy
 # Assure popcon doesn't kick in
 RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
+
+RUN apt-get install -y -q python-pip 
+RUN apt-get install -y -q virtualenv || apt-get install -y -q python-virtualenv
+
 # Install datalad dependencies
 RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib
-RUN apt-get install -y -q DL_ANNEX git-annex
+RUN apt-get install -y -q DL_ANNEX 
 
 RUN apt-get clean
 
