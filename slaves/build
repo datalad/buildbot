@@ -12,7 +12,7 @@ set -eu
 	DL_APT="" # nothing to add by default BUT
 	DL_ANNEX="git-annex"
     # We need standalone build of annex for anything but jessie or newer
-	if [ $DL_DIST != 'nd80' ]; then
+	if [ $DL_DIST != 'XXX' ]; then
 	   if [ $DL_DIST = 'nd70' ]; then
 		DL_APT="RUN echo 'deb http://http.debian.net/debian wheezy-backports main contrib non-free' > /etc/apt/sources.list.d/backports.list; apt-get update; apt-get install -y -t wheezy-backports git"
 	   fi
