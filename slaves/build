@@ -27,7 +27,7 @@ set -eu
 
 	# add --no-cache if complete rebuild is necessary, otherwise it would re-use prev generated
 	# containers for each step
-	docker build --no-cache -t datalad/buildbot:slave-$DL_SLAVE . #&& rm Dockerfile
+	docker build -t datalad/buildbot:slave-$DL_SLAVE . #&& rm Dockerfile
 
 	# can't do below trick if want to use COPY with relative path... not sure what is default dir then
 	# - < Dockerfile

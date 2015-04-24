@@ -2,3 +2,6 @@
 	path = 3rd/buildbot
 	url = git://github.com/caktux/buildbot
 	#url = git://github.com/buildbot/buildbot
+[submodule "slaves/3rd/baseimage-docker"]
+	path = slaves/3rd/baseimage-docker
+	url = git://github.com/phusion/baseimage-docker

@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y -q \
 RUN pip install buildbot-slave
 #RUN groupadd -r buildbot && useradd -r -g buildbot buildbot
 #RUN mkdir /buildslave && chown buildbot:buildbot /buildslave
-RUN groupadd -r buildbot && useradd -m -g buildbot buildbot
+RUN groupadd --gid 131 -r buildbot && useradd -m --uid 121 -g buildbot buildbot
 
 # TODO: add backports for wheezy
 # Assure popcon doesn't kick in
@@ -31,6 +31,13 @@ RUN apt-get install -y -q virtualenv || apt-get install -y -q python-virtualenv
 RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib
 RUN apt-get install -y -q DL_ANNEX 
 
+
+# Setup init system
+COPY 3rd/baseimage-docker/image/bin/my_init /sbin/my_init
+RUN apt-get install -y -q python3 runit
+RUN mkdir -p /etc/service/buildslave && echo "#!/bin/sh\nsu -c '/usr/local/bin/buildslave start --nodaemon /home/buildbot' buildbot\n" >| /etc/service/buildslave/run && chmod +x /etc/service/buildslave/run
+RUN mkdir -p /etc/container_environment && echo -n no > /etc/container_environment/INITRD
+
 RUN apt-get clean
 
 USER buildbot
@@ -39,5 +46,6 @@ WORKDIR /home/buildbot
 RUN git config --global user.email "test@buildslave.land"
 RUN git config --global user.name "Buildbot DL_SLAVE almighty"
 RUN buildslave create-slave . 172.17.42.1 DL_SLAVE DL_PASSW
-ENTRYPOINT ["/usr/local/bin/buildslave"]
-CMD ["start", "--nodaemon"]
+
+USER root
+ENTRYPOINT ["/sbin/my_init"]
