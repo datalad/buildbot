@@ -12,9 +12,15 @@ RUN chmod a+r /etc/apt/apt.conf.d/99apt-cacher
 
 DL_APT
 
+# Make deb-src avail
+RUN sed -i -e 's,^deb\(.*\),deb\1\ndeb-src\1,g' /etc/apt/sources.list.d/neurodebian.sources.list /etc/apt/sources.list
+
 RUN apt-get update && apt-get install -y -q \
    python-dev \
    python-pip
+# For PyMVPA
+RUN apt-get build-dep python-mvpa2; apt-get install python-sklearn ; apt-get install python-shogun || :
+
 RUN pip install buildbot-slave
 #RUN groupadd -r buildbot && useradd -r -g buildbot buildbot
 #RUN mkdir /buildslave && chown buildbot:buildbot /buildslave
