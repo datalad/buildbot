@@ -4,14 +4,23 @@ set -eu
 
 #DL_DISTs="${@:-nd"
 
-# TODO: wait for nd14.10 being generated
+# TODO:
+#   [done? to be checked] datalad_pymvpa/buildbot:slave-docker-dl-nd70  needed manually pull in python{,3}-six from backports
+#   [done?] nd14_04 -- uninstalled rdflib since  system wide takes precedence over locally installed and system wide
+#   is outdated
+
+
 ../master/private/slaves.py print_dockers |  while read DL_SLAVE DL_DIST DL_PASSW; do
 	# buildbot can't tollerate dots in the names
 #	DL_SLAVE=docker-dl-${DL_DIST//./_}
 #	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)
 	DL_APT="" # nothing to add by default BUT
 	DL_ANNEX="git-annex"
-    # We need standalone build of annex for anything but jessie or newer
+	if [ $DL_DIST = 'nd70' ]; then
+		#DL_APT="RUN echo 'deb http://http.debian.net/debian wheezy-backports main contrib non-free' > /etc/apt/sources.list.d/backports.list; apt-get update; apt-get install -y -t wheezy-backports git"
+		DL_APT="RUN apt-get install -y -t wheezy-backports python-six python3-six"
+	fi
+        # We need standalone build of annex for anything but jessie or newer
 	if [ $DL_DIST != 'XXX' ]; then
 	   if [ $DL_DIST = 'nd70' ]; then
 		DL_APT="RUN echo 'deb http://http.debian.net/debian wheezy-backports main contrib non-free' > /etc/apt/sources.list.d/backports.list; apt-get update; apt-get install -y -t wheezy-backports git"

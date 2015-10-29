@@ -8,18 +8,21 @@ USER root
 COPY conf/etc/apt/apt.conf.d/99apt-cacher /etc/apt/apt.conf.d/99apt-cacher
 RUN chmod a+r /etc/apt/apt.conf.d/99apt-cacher
 # might interfer later with the testing, so -- disable
-# ENV http_proxy http://172.17.42.1:3128
+# ENV http_proxy http://10.0.42.1:3128
 
 DL_APT
 
 # Make deb-src avail
 RUN sed -i -e 's,^deb\(.*\),deb\1\ndeb-src\1,g' /etc/apt/sources.list.d/neurodebian.sources.list /etc/apt/sources.list
 
+# Assure popcon doesn't kick in
+RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
+
 RUN apt-get update && apt-get install -y -q \
    python-dev \
    python-pip
 # For PyMVPA
-RUN apt-get build-dep python-mvpa2; apt-get install python-sklearn ; apt-get install python-shogun || :
+RUN apt-get build-dep -y -q python-mvpa2; apt-get install -y -q python-sklearn ; apt-get install -y -q python-shogun || :
 
 RUN pip install buildbot-slave
 #RUN groupadd -r buildbot && useradd -r -g buildbot buildbot
@@ -27,14 +30,14 @@ RUN pip install buildbot-slave
 RUN groupadd --gid 131 -r buildbot && useradd -m --uid 121 -g buildbot buildbot
 
 # TODO: add backports for wheezy
-# Assure popcon doesn't kick in
-RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
 
-RUN apt-get install -y -q python-pip 
+RUN apt-get install -y -q python-pip python-six python3-six
 RUN apt-get install -y -q virtualenv || apt-get install -y -q python-virtualenv
 
 # Install datalad dependencies
-RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib
+RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib python-rdflib python-dateutil
+# on nd14.04 need to prune rdflib otherwise env doesn't pick local one but system wide installed one which is too old
+RUN [ 'DL_DIST' != 'nd14.04' ] || dpkg --purge python-rdflib 
 RUN apt-get install -y -q DL_ANNEX 
 
 
@@ -44,6 +47,10 @@ RUN apt-get install -y -q python3 runit
 RUN mkdir -p /etc/service/buildslave && echo "#!/bin/sh\nsu -c '/usr/local/bin/buildslave start --nodaemon /home/buildbot' buildbot\n" >| /etc/service/buildslave/run && chmod +x /etc/service/buildslave/run
 RUN mkdir -p /etc/container_environment && echo -n no > /etc/container_environment/INITRD
 
+# Additional pieces
+#RUN apt-get install -y -q libffi-dev  # needed for vcr.py's dependecy, failed before on 14.04
+# For scrapy and vcr.py
+RUN apt-get install -y -q libffi-dev libssl-dev 
 RUN apt-get clean
 
 USER buildbot
@@ -51,7 +58,7 @@ WORKDIR /home/buildbot
 # Prepare system for working with Git
 RUN git config --global user.email "test@buildslave.land"
 RUN git config --global user.name "Buildbot DL_SLAVE almighty"
-RUN buildslave create-slave . 172.17.42.1 DL_SLAVE DL_PASSW
+RUN buildslave create-slave . 10.0.42.1 DL_SLAVE DL_PASSW
 
 USER root
 ENTRYPOINT ["/sbin/my_init"]
