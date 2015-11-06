@@ -21,6 +21,11 @@ RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set
 RUN apt-get update && apt-get install -y -q \
    python-dev \
    python-pip
+
+# TODO:  for nd70 we need to get upgraded pip, otherwise installations fail
+# http://smaug.datalad.org:8020/builders/datalad-pr-docker-dl-nd70/builds/557
+# for now added upgrade of pip as part of the master.cfg (also moved aside system-wide one iirc)
+
 # For PyMVPA
 RUN apt-get build-dep -y -q python-mvpa2; apt-get install -y -q python-sklearn ; apt-get install -y -q python-shogun || :
 
@@ -50,7 +55,11 @@ RUN mkdir -p /etc/container_environment && echo -n no > /etc/container_environme
 # Additional pieces
 #RUN apt-get install -y -q libffi-dev  # needed for vcr.py's dependecy, failed before on 14.04
 # For scrapy and vcr.py
-RUN apt-get install -y -q libffi-dev libssl-dev 
+# TODO: on wheezy we pulled in libldap-2.4-2 from backports so backports version of -dev must be installed as well
+#       the same for libgpg-error0
+# RUN apt-get install -y -q -t wheezy-backports libgpg-error-dev libldap2-dev libp11-kit-dev
+# libcurl4-openssl-dev needed for curl-config which is apparently needed while pip installing scrapy
+RUN apt-get install -y -q libffi-dev libssl-dev  libcurl4-openssl-dev
 RUN apt-get clean
 
 USER buildbot
