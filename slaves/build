@@ -10,7 +10,7 @@ set -eu
 #   is outdated
 
 
-../master/private/slaves.py print_dockers |  while read DL_SLAVE DL_DIST DL_PASSW; do
+../master/private/slaves.py print_dockers |  grep nd16.04 | while read DL_SLAVE DL_DIST DL_PASSW; do
 	# buildbot can't tollerate dots in the names
 #	DL_SLAVE=docker-dl-${DL_DIST//./_}
 #	DL_PASSW=$(awk -e "/^$DL_SLAVE /{print \$2;}" < ../master/private/slave_passwords)

@@ -13,7 +13,7 @@ RUN chmod a+r /etc/apt/apt.conf.d/99apt-cacher
 DL_APT
 
 # Make deb-src avail
-RUN sed -i -e 's,^deb\(.*\),deb\1\ndeb-src\1,g' /etc/apt/sources.list.d/neurodebian.sources.list /etc/apt/sources.list
+RUN sed -i -e 's,^deb \(.*\),deb \1\ndeb-src \1,g' /etc/apt/sources.list.d/neurodebian.sources.list /etc/apt/sources.list
 
 # Assure popcon doesn't kick in
 RUN bash -c "echo 'debconf debconf/frontend select noninteractive' | debconf-set-selections -"
@@ -40,7 +40,7 @@ RUN apt-get install -y -q python-pip python-six python3-six
 RUN apt-get install -y -q virtualenv || apt-get install -y -q python-virtualenv
 
 # Install datalad dependencies
-RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib python-rdflib python-dateutil python-requests python-keyring python-boto python-argcomplete python-appdirs python-humanize python-scrapy python-progressbar
+RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib python-rdflib python-dateutil python-requests python-keyring python-boto python-argcomplete python-appdirs python-humanize python-scrapy python-progressbar python-wrapt
 # on nd14.04 need to prune rdflib otherwise env doesn't pick local one but system wide installed one which is too old
 RUN [ 'DL_DIST' != 'nd14.04' ] || dpkg --purge python-rdflib 
 RUN apt-get install -y -q DL_ANNEX 
@@ -61,7 +61,7 @@ RUN mkdir -p /etc/container_environment && echo -n no > /etc/container_environme
 #       the same for libgpg-error0
 # RUN apt-get install -y -q -t wheezy-backports libgpg-error-dev libldap2-dev libp11-kit-dev
 # libcurl4-openssl-dev needed for curl-config which is apparently needed while pip installing scrapy
-RUN apt-get install -y -q libffi-dev libssl-dev
+RUN apt-get install -y -q libffi-dev libssl-dev liblzma-dev
 # there are conflicts among backports, so let it install "optionally"
 RUN apt-get install libcurl4-openssl-dev || :
 RUN apt-get clean
