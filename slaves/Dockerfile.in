@@ -40,7 +40,7 @@ RUN apt-get install -y -q python-pip python-six python3-six
 RUN apt-get install -y -q virtualenv || apt-get install -y -q python-virtualenv
 
 # Install datalad dependencies
-RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib python-rdflib python-dateutil python-requests python-keyring python-boto python-argcomplete python-appdirs python-humanize python-scrapy python-progressbar python-wrapt
+RUN apt-get install -y -q python-git python-bs4 patool python-testtools python-mock python-joblib python-rdflib python-dateutil python-requests python-keyring python-boto python-argcomplete python-appdirs python-humanize python-scrapy python-progressbar python-wrapt pandoc
 # on nd14.04 need to prune rdflib otherwise env doesn't pick local one but system wide installed one which is too old
 RUN [ 'DL_DIST' != 'nd14.04' ] || dpkg --purge python-rdflib 
 RUN apt-get install -y -q DL_ANNEX 
@@ -64,6 +64,10 @@ RUN mkdir -p /etc/container_environment && echo -n no > /etc/container_environme
 RUN apt-get install -y -q libffi-dev libssl-dev liblzma-dev
 # there are conflicts among backports, so let it install "optionally"
 RUN apt-get install libcurl4-openssl-dev || :
+
+# Special treatment from Germans to make testing on utf-8 filenames working
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+RUN apt-get install -y -q locales
 RUN apt-get clean
 
 USER buildbot
